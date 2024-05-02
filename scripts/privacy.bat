@@ -691,80 +691,80 @@ PowerShell-Command "$serviceQuery = 'MessagingService'; $service = Get-Service -
 PowerShell-Command "$serviceQuery = 'MessagingService_*'; $service = Get-Service -Name $serviceQuery -ErrorAction SilentlyContinue; if(!$service) {; Write-Host "^""Service query `"^""$serviceQuery`"^"" did not yield any results, no need to disable it."^""; Exit 0; }; $serviceName = $service.Name; Write-Host "^""Disabling service: `"^""$serviceName`"^""."^""; if ($service.Status -eq [System.ServiceProcess.ServiceControllerStatus]::Running) {; Write-Host "^""`"^""$serviceName`"^"" is running, trying to stop it."^""; try {; Stop-Service -Name "^""$serviceName"^"" -Force -ErrorAction Stop; Write-Host "^""Stopped `"^""$serviceName`"^"" successfully."^""; } catch {; Write-Warning "^""Could not stop `"^""$serviceName`"^"", it will be stopped after reboot: $_"^""; }; } else {; Write-Host "^""`"^""$serviceName`"^"" is not running, no need to stop."^""; }; <# -- 3. Skip if service info is not found in registry #>; $registryKey = "^""HKLM:\SYSTEM\CurrentControlSet\Services\$serviceName"^""; if(!(Test-Path $registryKey)) {; Write-Host "^""`"^""$registryKey`"^"" is not found in registry, cannot enable it."^""; Exit 0; }; <# -- 4. Skip if already disabled #>; if( $(Get-ItemProperty -Path "^""$registryKey"^"").Start -eq 4) {; Write-Host "^""`"^""$serviceName`"^"" is already disabled from start, no further action is needed."^""; Exit 0; }; <# -- 5. Disable service #>; try {; Set-ItemProperty $registryKey -Name Start -Value 4 -Force -ErrorAction Stop; Write-Host "^""Disabled `"^""$serviceName`"^"" successfully."^""; } catch {; Write-Error "^""Could not disable `"^""$serviceName`"^"": $_"^""; }"
 
 :: Kill OneDrive process
-tasklist /fi "ImageName eq OneDrive.exe" /fo csv 2>NUL | find /i "OneDrive.exe">NUL && (
-    echo OneDrive.exe is running and will be killed.
-    taskkill /f /im OneDrive.exe
-) || (
-    echo Skipping, OneDrive.exe is not running.
-)
+:: tasklist /fi "ImageName eq OneDrive.exe" /fo csv 2>NUL | find /i "OneDrive.exe">NUL && (
+::     echo OneDrive.exe is running and will be killed.
+::     taskkill /f /im OneDrive.exe
+:: ) || (
+::     echo Skipping, OneDrive.exe is not running.
+:: )
 
 :: Remove OneDrive from startup
-reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "OneDrive" /f 2>nul
+:: reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "OneDrive" /f 2>nul
 
 :: Uninstall OneDrive
-if exist "%SystemRoot%\System32\OneDriveSetup.exe" (
-    "%SystemRoot%\System32\OneDriveSetup.exe" /uninstall
-) else (
-    if exist "%SystemRoot%\SysWOW64\OneDriveSetup.exe" (
-        "%SystemRoot%\SysWOW64\OneDriveSetup.exe" /uninstall
-    ) else (
-        echo Failed to uninstall, uninstaller could not be found. 1>&2
-    )
-)
+:: if exist "%SystemRoot%\System32\OneDriveSetup.exe" (
+::     "%SystemRoot%\System32\OneDriveSetup.exe" /uninstall
+:: ) else (
+::     if exist "%SystemRoot%\SysWOW64\OneDriveSetup.exe" (
+::         "%SystemRoot%\SysWOW64\OneDriveSetup.exe" /uninstall
+::     ) else (
+::         echo Failed to uninstall, uninstaller could not be found. 1>&2
+::     )
+:: )
 
 :: Remove OneDrive files
 :: OneDrive root folder
-if exist "%UserProfile%\OneDrive" (
-    rd "%UserProfile%\OneDrive" /q /s
-)
+:: if exist "%UserProfile%\OneDrive" (
+::     rd "%UserProfile%\OneDrive" /q /s
+:: )
 :: OneDrive installation directory
-if exist "%LocalAppData%\Microsoft\OneDrive" (
-    rd "%LocalAppData%\Microsoft\OneDrive" /q /s
-)
+:: if exist "%LocalAppData%\Microsoft\OneDrive" (
+::     rd "%LocalAppData%\Microsoft\OneDrive" /q /s
+:: )
 :: OneDrive data
-if exist "%ProgramData%\Microsoft OneDrive" (
-    rd "%ProgramData%\Microsoft OneDrive" /q /s
-)
+:: if exist "%ProgramData%\Microsoft OneDrive" (
+::     rd "%ProgramData%\Microsoft OneDrive" /q /s
+:: )
 :: OneDrive cache
-if exist "%SystemDrive%\OneDriveTemp" (
-    rd "%SystemDrive%\OneDriveTemp" /q /s
-)
+:: if exist "%SystemDrive%\OneDriveTemp" (
+::     rd "%SystemDrive%\OneDriveTemp" /q /s
+:: )
 
 :: Delete OneDrive shortcuts
-if exist "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Microsoft OneDrive.lnk" (
-    del "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Microsoft OneDrive.lnk" /s /f /q
-)
-if exist "%APPDATA%\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" (
-    del "%APPDATA%\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" /s /f /q
-)
-if exist "%USERPROFILE%\Links\OneDrive.lnk" (
-    del "%USERPROFILE%\Links\OneDrive.lnk" /s /f /q
-)
-if exist "%SystemDrive%\Windows\ServiceProfiles\LocalService\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" (
-    del "%SystemDrive%\Windows\ServiceProfiles\LocalService\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" /s /f /q
-)
-if exist "%SystemDrive%\Windows\ServiceProfiles\NetworkService\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" (
-    del "%SystemDrive%\Windows\ServiceProfiles\NetworkService\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" /s /f /q
-)
-PowerShell -Command "Set-Location "^""HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace"^""; Get-ChildItem | ForEach-Object {Get-ItemProperty $_.pspath} | ForEach-Object {; $leftnavNodeName = $_."^""(default)"^"";; if (($leftnavNodeName -eq "^""OneDrive"^"") -Or ($leftnavNodeName -eq "^""OneDrive - Personal"^"")) {; if (Test-Path $_.pspath) {; Write-Host "^""Deleting $($_.pspath)."^""; Remove-Item $_.pspath;; }; }; }"
+:: if exist "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Microsoft OneDrive.lnk" (
+::     del "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Microsoft OneDrive.lnk" /s /f /q
+:: )
+:: if exist "%APPDATA%\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" (
+::     del "%APPDATA%\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" /s /f /q
+:: )
+:: if exist "%USERPROFILE%\Links\OneDrive.lnk" (
+::     del "%USERPROFILE%\Links\OneDrive.lnk" /s /f /q
+:: )
+:: if exist "%SystemDrive%\Windows\ServiceProfiles\LocalService\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" (
+::     del "%SystemDrive%\Windows\ServiceProfiles\LocalService\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" /s /f /q
+:: )
+:: if exist "%SystemDrive%\Windows\ServiceProfiles\NetworkService\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" (
+::     del "%SystemDrive%\Windows\ServiceProfiles\NetworkService\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" /s /f /q
+:: )
+:: PowerShell -Command "Set-Location "^""HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace"^""; Get-ChildItem | ForEach-Object {Get-ItemProperty $_.pspath} | ForEach-Object {; $leftnavNodeName = $_."^""(default)"^"";; if (($leftnavNodeName -eq "^""OneDrive"^"") -Or ($leftnavNodeName -eq "^""OneDrive - Personal"^"")) {; if (Test-Path $_.pspath) {; Write-Host "^""Deleting $($_.pspath)."^""; Remove-Item $_.pspath;; }; }; }"
 
 :: Block OneDrive usage
-reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive" /t REG_DWORD /v "DisableFileSyncNGSC" /d 1 /f
-reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive" /t REG_DWORD /v "DisableFileSync" /d 1 /f
+:: reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive" /t REG_DWORD /v "DisableFileSyncNGSC" /d 1 /f
+:: reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive" /t REG_DWORD /v "DisableFileSync" /d 1 /f
 
 :: Prevent automatic OneDrive installation
-PowerShell -Command "reg delete "^""HKCU\Software\Microsoft\Windows\CurrentVersion\Run"^"" /v "^""OneDriveSetup"^"" /f 2>$null"
+:: PowerShell -Command "reg delete "^""HKCU\Software\Microsoft\Windows\CurrentVersion\Run"^"" /v "^""OneDriveSetup"^"" /f 2>$null"
 
 
 :: Remove OneDrive folder from File Explorer
-reg add "HKCR\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /v "System.IsPinnedToNameSpaceTree" /d "0" /t REG_DWORD /f
-reg add "HKCR\Wow6432Node\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /v "System.IsPinnedToNameSpaceTree" /d "0" /t REG_DWORD /f
+:: reg add "HKCR\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /v "System.IsPinnedToNameSpaceTree" /d "0" /t REG_DWORD /f
+:: reg add "HKCR\Wow6432Node\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /v "System.IsPinnedToNameSpaceTree" /d "0" /t REG_DWORD /f
 
 :: Disable OneDrive scheduled tasks
-PowerShell -Command "$tasks=$(; Get-ScheduledTask 'OneDrive Reporting Task-*'; Get-ScheduledTask 'OneDrive Standalone Update Task-*'; ); if($tasks.Length -eq 0) {; Write-Host 'Skipping, no OneDrive tasks exists.'; } else {; Write-Host "^""Total found OneDrive tasks: $($tasks.Length)."^""; foreach ($task in $tasks) {; $fullPath = $task.TaskPath + $task.TaskName; Write-Host "^""Deleting `"^""$fullPath`"^"""^""; schtasks /DELETE /TN "^""$fullPath"^"" /f; }; }"
+:: PowerShell -Command "$tasks=$(; Get-ScheduledTask 'OneDrive Reporting Task-*'; Get-ScheduledTask 'OneDrive Standalone Update Task-*'; ); if($tasks.Length -eq 0) {; Write-Host 'Skipping, no OneDrive tasks exists.'; } else {; Write-Host "^""Total found OneDrive tasks: $($tasks.Length)."^""; foreach ($task in $tasks) {; $fullPath = $task.TaskPath + $task.TaskName; Write-Host "^""Deleting `"^""$fullPath`"^"""^""; schtasks /DELETE /TN "^""$fullPath"^"" /f; }; }"
 
 :: Delete OneDrive environment variable
-reg delete "HKCU\Environment" /v "OneDrive" /f 2>nul
+:: reg delete "HKCU\Environment" /v "OneDrive" /f 2>nul
 
 :: Disable cloud search
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\SearchSettings" /v "IsMSACloudSearchEnabled" /d "0" /t REG_DWORD /f

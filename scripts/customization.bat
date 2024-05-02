@@ -8,7 +8,7 @@ if %OS%==64BIT (
 )
 
 :: Show seconds in system clock.
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /f /v ShowSecondsInSystemClock /t REG_DWORD /d 1
+:: reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /f /v ShowSecondsInSystemClock /t REG_DWORD /d 1
 
 :: Remove the lock screen because it just adds another reason to press the spacebar.
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization" /f /v NoLockScreen /t REG_DWORD /d 1
@@ -17,14 +17,14 @@ reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization" /f /v NoLockS
 reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /f /v DisallowShaking /t REG_DWORD /d 1
 
 :: Enable the default Windows Photo Viewer instead of the Photos app.
-reg add "HKCR\Applications\photoviewer.dll" /f
-reg add "HKCR\Applications\photoviewer.dll\shell" /f
-reg add "HKCR\Applications\photoviewer.dll\shell\open" /f /v MuiVerb /t REG_SZ /d "@photoviewer.dll,-3043"
-reg add "HKCR\Applications\photoviewer.dll\shell\open\command" /f /ve /t REG_EXPAND_SZ /d "%SystemRoot%\System32\rundll32.exe \"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll\", ImageView_Fullscreen %1"
-reg add "HKCR\Applications\photoviewer.dll\shell\open\DropTarget" /f /v Clsid /t REG_SZ /d "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}"
-reg add "HKCR\Applications\photoviewer.dll\shell\print" /f
-reg add "HKCR\Applications\photoviewer.dll\shell\print\command" /f /ve /t REG_EXPAND_SZ /d "%SystemRoot%\System32\rundll32.exe \"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll\", ImageView_Fullscreen %1"
-reg add "HKCR\Applications\photoviewer.dll\shell\print\DropTarget" /f /v Clsid /t REG_SZ /d "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}"
+:: reg add "HKCR\Applications\photoviewer.dll" /f
+:: reg add "HKCR\Applications\photoviewer.dll\shell" /f
+:: reg add "HKCR\Applications\photoviewer.dll\shell\open" /f /v MuiVerb /t REG_SZ /d "@photoviewer.dll,-3043"
+:: reg add "HKCR\Applications\photoviewer.dll\shell\open\command" /f /ve /t REG_EXPAND_SZ /d "%SystemRoot%\System32\rundll32.exe \"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll\", ImageView_Fullscreen %1"
+:: reg add "HKCR\Applications\photoviewer.dll\shell\open\DropTarget" /f /v Clsid /t REG_SZ /d "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}"
+:: reg add "HKCR\Applications\photoviewer.dll\shell\print" /f
+:: reg add "HKCR\Applications\photoviewer.dll\shell\print\command" /f /ve /t REG_EXPAND_SZ /d "%SystemRoot%\System32\rundll32.exe \"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll\", ImageView_Fullscreen %1"
+:: reg add "HKCR\Applications\photoviewer.dll\shell\print\DropTarget" /f /v Clsid /t REG_SZ /d "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}"
 
 :: Disable the News and Interests feed in the taskbar.
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Feeds" /f /v ShellFeedsTaskbarViewMode /t REG_DWORD /d 2
@@ -59,7 +59,7 @@ reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /f /v
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /f /v Start_ShowHelp /t REG_DWORD /d 0
 
 :: Set the Edge new tab to be a blank page.
-reg add "HKLM\Software\Policies\Microsoft\Edge" /f /v NewTabPageLocation /t REG_SZ /d "about:blank"
+:: reg add "HKLM\Software\Policies\Microsoft\Edge" /f /v NewTabPageLocation /t REG_SZ /d "about:blank"
 
 :: Disable any kinds of promotional materials from Edge.
 reg add "HKLM\Software\Policies\Microsoft\Edge" /f /v ShowRecommendationsEnabled /t REG_DWORD /d 0
@@ -139,7 +139,7 @@ reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "T
 reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "HideSCAMeetNow" /t REG_DWORD /d 1 /f
 
 :: Make sure that the Print Screen button maintains its designed behavior.
-reg add "HKCU\Control Panel\Keyboard\PrintScreenKeyForSnippingEnabled" /v "HideSCAMeetNow" /t REG_DWORD /d 0 /f
+:: reg add "HKCU\Control Panel\Keyboard\PrintScreenKeyForSnippingEnabled" /v "HideSCAMeetNow" /t REG_DWORD /d 0 /f
 
 :: Disable lock screen slide show
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Lock Screen" /v "SlideshowEnabled" /t REG_DWORD /d 0 /f

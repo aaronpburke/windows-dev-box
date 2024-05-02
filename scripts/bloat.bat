@@ -145,7 +145,7 @@ PowerShell -Command "Get-AppxPackage '46928bounde.EclipseManager' | Remove-AppxP
 PowerShell -Command "Get-AppxPackage 'ActiproSoftwareLLC.562882FEEB491' | Remove-AppxPackage"
 
 :: Spotify
-PowerShell -Command "Get-AppxPackage 'SpotifyAB.SpotifyMusic' | Remove-AppxPackage"
+:: PowerShell -Command "Get-AppxPackage 'SpotifyAB.SpotifyMusic' | Remove-AppxPackage"
 
 :: Windows Web Experience Pack (breaks Widgets)
 PowerShell -Command "Get-AppxPackage 'MicrosoftWindows.Client.WebExperience' | Remove-AppxPackage"
